@@ -1,0 +1,11 @@
+version: '3.9'
+
+services:
+  blog:
+    build: ./
+    command: npm start
+    working_dir: /app
+    ports:
+      - '8080:8080'
+    volumes:
+      - './:/app'
