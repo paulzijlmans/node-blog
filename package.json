@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --delay 5 app.js"
+    "start": "nodemon -L --delay 5 app.js"
   },
   "author": "",
   "license": "ISC",

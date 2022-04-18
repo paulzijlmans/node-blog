@@ -12,10 +12,10 @@ const feedRoutes = require('./routes/feed');
 const app = express();
 
 const fileStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: (_req, _file, cb) => {
     cb(null, 'images');
   },
-  filename: (req, file, cb) => {
+  filename: (_req, file, cb) => {
     cb(null, new Date().toISOString() + '-' + file.originalname);
   }
 });
@@ -34,7 +34,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use((_req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Allow-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
