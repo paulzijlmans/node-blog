@@ -8,6 +8,7 @@ const multer = require('multer');
 require('dotenv').config();
 const { PORT, MONGODB_USERNAME, MONGODB_PASSWORD, MONGODB_DATABASE } = process.env;
 const feedRoutes = require('./routes/feed');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use((_req, res, next) => {
 });
 
 app.use('/feed', feedRoutes);
+app.use('/auth', authRoutes);
 
 app.use((error, _req, res, _next) => {
   console.log('error', error);
