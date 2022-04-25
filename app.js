@@ -47,7 +47,8 @@ app.use((error, _req, res, _next) => {
   console.log('error', error);
   const status = error.statusCode || 500;
   const message = error.message;
-  res.status(status).json({ message });
+  const data = error.data;
+  res.status(status).json({ message, data });
 });
 
 mongoose.connect(`mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@cluster0.tbgkr.mongodb.net/${MONGODB_DATABASE}?retryWrites=true&w=majority`)
