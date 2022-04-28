@@ -5,7 +5,7 @@ const { validationResult } = require('express-validator');
 
 const Post = require('../models/post');
 const User = require('../models/user');
-const { handleError } = require('../util/error-handler');
+const { handleError, throwError } = require('../util/error-handler');
 
 exports.getPosts = (req, res, next) => {
   const currentPage = req.query.page || 1;
@@ -25,14 +25,10 @@ exports.getPosts = (req, res, next) => {
 exports.createPost = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const error = new Error('Validation failed, entered data is incorrect.');
-    error.statusCode = 422;
-    throw error;
+    throwError('Validation failed, entered data is incorrect.', 422);
   }
   if (!req.file) {
-    const error = new Error('No Image Provided.');
-    error.statusCode = 422;
-    throw error;
+    throwError('No Image Provided.', 422);
   }
   const imageUrl = req.file.path;
   const title = req.body.title;
@@ -68,9 +64,7 @@ exports.getPost = (req, res, next) => {
   Post.findById(postId)
     .then(post => {
       if (!post) {
-        const error = new Error('Could not find post.');
-        error.statusCode = 404;
-        throw error;
+        throwError('Could not find post.', 404);
       }
       res.status(200).json({ message: 'Post fetched.', post });
     })
@@ -81,9 +75,7 @@ exports.updatePost = (req, res, next) => {
   const postId = req.params.postId;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const error = new Error('Validation failed, entered data is incorrect.');
-    error.statusCode = 422;
-    throw error;
+    throwError('Validation failed, entered data is incorrect.', 422);
   }
   const title = req.body.title;
   const content = req.body.content;
@@ -92,16 +84,15 @@ exports.updatePost = (req, res, next) => {
     imageUrl = req.file.path;
   }
   if (!imageUrl) {
-    const error = new Error('No image provided.');
-    error.statusCode = 422;
-    throw error;
+    throwError('No image provided.', 422);
   }
   Post.findById(postId)
     .then(post => {
       if (!post) {
-        const error = new Error('Could not find post.');
-        error.statusCode = 404;
-        throw error;
+        throwError('Could not find post.', 404);
+      }
+      if (post.creator.toString() !== req.userId) {
+        throwError('Not authorized!', 403);
       }
       if (imageUrl !== post.imageUrl) {
         clearImage(post.imageUrl);
@@ -120,9 +111,10 @@ exports.deletePost = (req, res, next) => {
   Post.findById(postId)
     .then(post => {
       if (!post) {
-        const error = new Error('Could not find post.');
-        error.statusCode = 404;
-        throw error;
+        throwError('Could not find post.', 404);
+      }
+      if (post.creator.toString() !== req.userId) {
+        throwError('Not authorized!', 403);
       }
       clearImage(post.imageUrl);
       return Post.findByIdAndRemove(postId);
