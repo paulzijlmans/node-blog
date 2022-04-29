@@ -10,13 +10,11 @@ router.put('/signup', [
   body('email')
     .isEmail()
     .withMessage('Please enter a valid email.')
-    .custom((value, { _req }) => {
-      return User.findOne({ email: value })
-        .then(userDoc => {
-          if (userDoc) {
-            return Promise.reject('Email address already exists.');
-          }
-        })
+    .custom(async (value) => {
+      const userDoc = await User.findOne({ email: value });
+      if (userDoc) {
+        return Promise.reject('Email address already exists.');
+      }
     })
     .normalizeEmail(),
   body('password')

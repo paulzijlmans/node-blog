@@ -53,7 +53,8 @@ app.use((error, _req, res, _next) => {
 
 mongoose.connect(`mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@cluster0.tbgkr.mongodb.net/${MONGODB_DATABASE}?retryWrites=true&w=majority`)
   .then(() => {
-    console.log('Listening on Port 8080');
-    app.listen(PORT || 8080);
+    const port = PORT || 8080;
+    console.log(`Listening on Port ${port}`);
+    app.listen(port);
   })
   .catch(err => console.log(err));
