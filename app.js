@@ -7,8 +7,6 @@ const multer = require('multer');
 
 require('dotenv').config();
 const { PORT, MONGODB_USERNAME, MONGODB_PASSWORD, MONGODB_DATABASE } = process.env;
-const feedRoutes = require('./routes/feed');
-const authRoutes = require('./routes/auth');
 
 const app = express();
 
@@ -40,9 +38,6 @@ app.use((_req, res, next) => {
   next();
 });
 
-app.use('/feed', feedRoutes);
-app.use('/auth', authRoutes);
-
 app.use((error, _req, res, _next) => {
   console.log('error', error);
   const status = error.statusCode || 500;
@@ -55,10 +50,6 @@ mongoose.connect(`mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@cluster0
   .then(() => {
     const port = PORT || 8080;
     console.log(`Listening on Port ${port}`);
-    const server = app.listen(port);
-    const io = require('./socket').init(server);
-    io.on('connection', socket => {
-      console.log('Client connected');
-    });
+    app.listen(port);
   })
   .catch(err => console.log(err));
