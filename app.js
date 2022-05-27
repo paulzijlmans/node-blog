@@ -1,5 +1,4 @@
 const path = require('path');
-const fs = require('fs');
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -10,6 +9,7 @@ const { graphqlHTTP } = require('express-graphql');
 const graphqlSchema = require('./graphql/schema');
 const graphqlResolver = require('./graphql/resolvers');
 const auth = require('./middleware/auth');
+const { clearImage } = require('./util/file');
 
 require('dotenv').config();
 const { PORT, MONGODB_USERNAME, MONGODB_PASSWORD, MONGODB_DATABASE } = process.env;
@@ -50,7 +50,7 @@ app.use((req, res, next) => {
 app.use(auth);
 
 app.put('/post-image', (req, res, _next) => {
-  if(!req.isAuth) {
+  if (!req.isAuth) {
     throw new Error('Not authenticated!');
   }
   if (!req.file) {
@@ -96,8 +96,3 @@ mongoose.connect(`mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@cluster0
     app.listen(port);
   })
   .catch(err => console.log(err));
-
-const clearImage = filePath => {
-  filePath = path.join(__dirname, '..', filePath);
-  fs.unlink(filePath, err => console.log(err));
-}
