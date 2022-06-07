@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 
 require('dotenv').config();
-const { PORT, MONGODB_USERNAME, MONGODB_PASSWORD, MONGODB_DATABASE } = process.env;
+const { PORT, MONGODB_USERNAME, MONGODB_PASSWORD, MONGODB_DATABASE, MONGODB_CLUSTERNAME } = process.env;
 const feedRoutes = require('./routes/feed');
 const authRoutes = require('./routes/auth');
 
@@ -51,7 +51,7 @@ app.use((error, _req, res, _next) => {
   res.status(status).json({ message, data });
 });
 
-mongoose.connect(`mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@cluster0.tbgkr.mongodb.net/${MONGODB_DATABASE}?retryWrites=true&w=majority`)
+mongoose.connect(`mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_CLUSTERNAME}.mongodb.net/${MONGODB_DATABASE}?retryWrites=true&w=majority`)
   .then(() => {
     const port = PORT || 8080;
     console.log(`Listening on Port ${port}`);
